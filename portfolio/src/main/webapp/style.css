@@ -11,6 +11,17 @@
     justify-content: center;
 }
 
+#contact-info {
+    box-sizing: border-box;
+    display: flex;
+    justify-content: center;
+}
+
+#contact-info > a {
+    font-size: 25px;
+    margin: 0px 100px 50px 100px;
+}
+
 .gallery {
     align-items: center;
     display: flex;
@@ -90,6 +101,7 @@ h1 {
     padding: 30px;
 }
 
+#contact-info,
 .section-header {
     max-width: auto;
     min-width: 965px;
