@@ -11,6 +11,14 @@
     justify-content: center;
 }
 
+.comments-container {
+    align-content: center;
+    clear: both;
+    display: flex;
+    flex-direction: column;
+    max-width: 100%;
+}
+
 #contact-info {
     box-sizing: border-box;
     display: flex;

@@ -14,7 +14,7 @@ async function loadComments() {
 /*
 * For a given string creates a new div element on the page which contains the paragraph of comment text.
 */
-createComment = (comment, id) => {
+createComment = (comment) => {
 
     //Initializes a div element to hold a paragraph element with the comment
     let newComment = document.createElement("div");
@@ -24,7 +24,7 @@ createComment = (comment, id) => {
     //Adds the paragraph to the div, and then appends the new div to the website
     commentText.appendChild(node);
     newComment.appendChild(commentText);
-    document.getElementById(id).appendChild(newComment);
+    document.getElementById("league-of-legends-comments").appendChild(newComment);
 }
 
 /*
