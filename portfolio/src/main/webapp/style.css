@@ -99,6 +99,14 @@ h1 {
     margin: 0px 0px 0px 40px;
 }
 
+.show-comments-button {
+    box-sizing: border-box;
+    float: right;
+    max-width: max-content;
+    height: 50px;
+    text-align: center;
+}
+
 .sections {
     box-sizing: border-box;
     margin: 0px 100px 125px 100px;
