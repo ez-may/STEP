@@ -8,13 +8,13 @@
 async function loadComments() {
     const response = await fetch("/data");
     const msgJson = await response.text();
-    convertJsonStringToArray(msgJson).forEach(createComgit ment);
+    convertJsonStringToArray(msgJson).forEach(createComment);
 }
 
 /*
 * For a given string creates a new div element on the page which contains the paragraph of comment text.
 */
-createComment = (comment) => {
+createComment = (comment, id) => {
 
     //Initializes a div element to hold a paragraph element with the comment
     let newComment = document.createElement("div");
@@ -24,7 +24,7 @@ createComment = (comment) => {
     //Adds the paragraph to the div, and then appends the new div to the website
     commentText.appendChild(node);
     newComment.appendChild(commentText);
-    document.getElementById("comments").appendChild(newComment);
+    document.getElementById(id).appendChild(newComment);
 }
 
 /*
@@ -39,7 +39,7 @@ convertJsonStringToArray = (arrayAsString) => {
     //replaces the quotes and commas seperating string elements from the json for double commas so
     // they can be sperated later
     arrayAsString = arrayAsString.replace(/\",\"/g, ",*,");
-
+    
     //replaces the delimiting brackets which remain from being in array notation
     arrayAsString = arrayAsString.replace(/\[\"/, "");
     arrayAsString = arrayAsString.replace(/\"\]/, "");
