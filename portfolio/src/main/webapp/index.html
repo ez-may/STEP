@@ -142,7 +142,18 @@
             <h1>Comments</h1>
         </div>
         <div class="sections" id="comments"> 
-            
+            <div id="comments-container">
+            </div>
+            <form id="new-comment" action="/data" method="POST">
+                <div id="name-input">
+                    <label id="name-label" for="name">Your Name:</label>
+                    <input id="name-text-field" type="text" id="name">
+                </div>
+                <div id="comment-input">
+                    <textarea id="user-comment" name="user-comment"></textarea>
+                </div>
+                <input id="submit-comment-button" type="submit" value="Post Comment">
+            </form>
         </div>
   </body>
 </html>
