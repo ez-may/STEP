@@ -11,7 +11,7 @@
     justify-content: center;
 }
 
-.comments-container {
+#comments {
     align-content: center;
     clear: both;
     display: flex;
@@ -105,14 +105,6 @@ h1 {
 
 .right-side-text-container {
     margin: 0px 0px 0px 40px;
-}
-
-.show-comments-button {
-    box-sizing: border-box;
-    float: right;
-    max-width: max-content;
-    height: 50px;
-    text-align: center;
 }
 
 .sections {
