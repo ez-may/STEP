@@ -14,6 +14,9 @@
 
 package com.google.sps.servlets;
 
+import com.google.gson.Gson;
+import java.util.Arrays;
+import java.util.ArrayList;
 import java.io.IOException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -26,7 +29,31 @@ public class DataServlet extends HttpServlet {
 
   @Override
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
-    response.setContentType("text/html;");
-    response.getWriter().println("Hello Mathew");
+
+    
+    // Creates the hardcoded messages to be used in the stand in comment section.
+    ArrayList<String> msgs = new ArrayList<String>(
+        Arrays.asList(
+            "This is a great website.",
+            "This website still needs a lot of work.",
+            "In the future, everything in this website will work great together."
+        )
+    );
+    
+    // converts the hard coded messages into JSON
+    String json = convertToJsonUsingGson(msgs);
+
+    // Send the JSON as the response
+    response.setContentType("application:json;");
+    response.getWriter().println(json);
+  }
+
+  /*
+  * Conversts an array list of messages which are stored into a JSON string using the Gson library.
+  */
+  private String convertToJsonUsingGson(ArrayList<String> msgs) {
+      Gson gson = new Gson();
+      String json = gson.toJson(msgs);
+      return json;
   }
 }
