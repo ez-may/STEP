@@ -44,7 +44,7 @@ convertJsonStringToArray = (arrayAsString) => {
     arrayAsString = arrayAsString.replace(/\[\"/, "");
     arrayAsString = arrayAsString.replace(/\"\]/, "");
 
-    //seperates all the strings 
+    //separates all the strings 
     let arrayOfStrings = arrayAsString.split(",*,");
 
     console.log(arrayOfStrings);
