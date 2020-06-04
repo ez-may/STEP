@@ -1,4 +1,4 @@
-//TODO:(matwsuaz) : Update with logic to allow the implementation of a rotating image gallery with buttons, changing captions depending on what
+// TODO:(matwsuaz) : Update with logic to allow the implementation of a rotating image gallery with buttons, changing captions depending on what
 // image is being displayed, and a navigation bar which allows the user to navigate to different scroll positions.
 
 /*
@@ -16,12 +16,12 @@ async function loadComments() {
 */
 createComment = (comment) => {
 
-    //Initializes a div element to hold a paragraph element with the comment
+    // Initializes a div element to hold a paragraph element with the comment
     let newComment = document.createElement("div");
     let commentText = document.createElement("p");
     let node = document.createTextNode(comment);
     
-    //Adds the paragraph to the div, and then appends the new div to the website
+    // Adds the paragraph to the div, and then appends the new div to the website
     commentText.appendChild(node);
     newComment.appendChild(commentText);
     document.getElementById("league-of-legends-comments").appendChild(newComment);
@@ -36,15 +36,16 @@ convertJsonStringToArray = (arrayAsString) => {
     
     console.log(arrayAsString);
 
-    //replaces the quotes and commas seperating string elements from the json for double commas so
+    // replaces the quotes and commas seperating string elements from the json for double commas so
     // they can be sperated later
     arrayAsString = arrayAsString.replace(/\",\"/g, ",*,");
     
-    //replaces the delimiting brackets which remain from being in array notation
+    // replaces the delimiting brackets which remain from being in array notation
     arrayAsString = arrayAsString.replace(/\[\"/, "");
     arrayAsString = arrayAsString.replace(/\"\]/, "");
 
-    //separates all the strings 
+
+    // separates all the strings 
     let arrayOfStrings = arrayAsString.split(",*,");
 
     console.log(arrayOfStrings);
