@@ -1,4 +1,5 @@
 #about,
+#comments,
 #interests,
 #welcome {
     border: 1px solid rgba(94, 94, 94, 0.7);
@@ -9,6 +10,18 @@
     align-items: center;
     display: flex;
     justify-content: center;
+}
+
+#comment-input {
+    max-width: 700px;
+}
+
+#comments-container {
+    align-content: center;
+    clear: both;
+    display: flex;
+    flex-direction: column;
+    max-width: 100%;
 }
 
 #contact-info {
@@ -95,6 +108,27 @@ h1 {
     margin: 0px 40px 0px 0px;
 }
 
+#name-input {
+    display: flex;
+    flex-direction: column;
+}
+
+#name-label { 
+    margin: 7px;
+    width: max-content;
+}
+
+#name-text-field {
+    font-size: 16px;
+    width: 200px;
+}
+
+#new-comment {
+    display: flex;
+    flex-direction: column;
+    margin: 10px 0px 0px 80px;
+}
+
 .right-side-text-container {
     margin: 0px 0px 0px 40px;
 }
@@ -105,6 +139,11 @@ h1 {
     max-width: auto;
     min-width: 765px;
     padding: 30px;
+}
+
+#submit-comment-button {
+    float: right;
+    width: max-content;
 }
 
 .text-container {
@@ -118,4 +157,12 @@ h1 {
 .gallery {
     box-sizing: border-box;
     display: flex;
+}
+
+#user-comment {
+    box-sizing: border-box;
+    font-size: 16px;
+    height: 93px;
+    margin: 10px 10px 10px 0px;
+    width: 100%;
 }
