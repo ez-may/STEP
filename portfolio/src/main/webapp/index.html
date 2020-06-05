@@ -6,7 +6,7 @@
     <link rel="stylesheet" href="style.css">
     <script src="script.js"></script>
   </head>
-  <body>
+  <body onLoad="loadComments()">
         <div class="section-header">
             <h1>Welcome</h1>
         </div>
@@ -147,7 +147,7 @@
             <form id="new-comment" action="/data" method="POST">
                 <div id="name-input">
                     <label id="name-label" for="name">Your Name:</label>
-                    <input id="name-text-field" type="text" id="name">
+                    <input id="name-text-field" type="text" name="name">
                 </div>
                 <div id="comment-input">
                     <textarea id="user-comment" name="user-comment"></textarea>
