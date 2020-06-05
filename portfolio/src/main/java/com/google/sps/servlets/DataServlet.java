@@ -27,33 +27,79 @@ import javax.servlet.http.HttpServletResponse;
 @WebServlet("/data")
 public class DataServlet extends HttpServlet {
 
-  @Override
-  public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
+    private ArrayList<UserComment> allComments = new ArrayList<UserComment>();
 
-    
-    // Creates the hardcoded messages to be used in the stand in comment section.
-    ArrayList<String> msgs = new ArrayList<String>(
-        Arrays.asList(
-            "This is a great website.",
-            "This website still needs a lot of work.",
-            "In the future, everything in this website will work great together."
-        )
-    );
-    
-    // converts the hard coded messages into JSON
-    String json = convertToJsonUsingGson(msgs);
+    @Override
+    public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        
+        // Send the JSON as the response
+        response.setContentType("application:json;");
+        response.getWriter().println(convertCommentsToJson());
+    }
 
-    // Send the JSON as the response
-    response.setContentType("application:json;");
-    response.getWriter().println(json);
-  }
+    /*
+    * Takes all the comments which the servelet is currently storing and converts 
+    * them to JSON, such that the final string should be of the form: 
+    * "[{name: "userName1", comment: userCommnet1"}]"
+    * Note that this implementation allows for the FE to convert this into a list of
+    * strings in JSON format, and should more instance variables be included in a 
+    * UserComment object this function should not be affected.
+    */
+    private String convertCommentsToJson() {
+        
+        // gson object to access conversion functions
+        Gson gson = new Gson();
 
-  /*
-  * Conversts an array list of messages which are stored into a JSON string using the Gson library.
-  */
-  private String convertToJsonUsingGson(ArrayList<String> msgs) {
-      Gson gson = new Gson();
-      String json = gson.toJson(msgs);
-      return json;
-  }
+        // Holds all the JSON objects in an arraylist which can later be converted
+        ArrayList<String> jsonComments = new ArrayList<String>();
+
+        // Goes through each usercomment object and converts it to JSON.
+        // JSON objects are then added to the arraylist  
+        for (UserComment uc : allComments) {
+            
+            // Creates a new reference for each tempstring as it loops through
+            String tempString = new String();
+            tempString = gson.toJson(uc);
+
+            jsonComments.add(tempString);
+        }
+
+        // Converts and returns the arraylist of json objects as a json string
+        return gson.toJson(jsonComments);
+    }
+
+    @Override
+    public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        
+        // Processes the user comment
+        String name = request.getParameter("name");
+        String text = request.getParameter("user-comment");
+
+        // Converts the values into a new UserComment object and adds it to the list
+        UserComment newComment = new UserComment(name, text);
+        comments.add(newComment);
+
+        // Redirect back to main page
+        response.sendRedirect("/index.html");
+
+    }
+
+    /**
+    * User comment class which allows for the easy grouping of information related
+    * to a comment. Because of the implementation of GSON, having all the information
+    * related to a comment in a single object allows it to easily be converted to JSON
+    * later and will make FE parsing easier.
+    **/
+    private class UserComment {
+
+        public String userName;
+        public String userComment;
+
+        public void UserComment(String name, String text) {
+            userName = name;
+            userComment = text;
+        }
+
+    }
+
 }
