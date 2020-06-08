@@ -32,15 +32,13 @@ public class DataServlet extends HttpServlet {
     @Override
     public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
         
-        if (allComments.size() == 0) {
-
+        if (allComments.isEmpty()) {
             // If there are no comments, then we send an empty string so the FE
             // can handle it, otherwise we send the comments normally
             response.setContentType("text");
             response.getWriter().println("");
 
         } else {
-
             // Send the JSON as the response
             response.setContentType("application:json;");
             response.getWriter().println(convertCommentsToJson());
