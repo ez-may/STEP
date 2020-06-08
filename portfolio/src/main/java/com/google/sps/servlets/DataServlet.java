@@ -32,9 +32,17 @@ public class DataServlet extends HttpServlet {
     @Override
     public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
         
-        // Send the JSON as the response
-        response.setContentType("application:json;");
-        response.getWriter().println(convertCommentsToJson());
+        if (allComments.isEmpty()) {
+            // If there are no comments, then we send an empty string so the FE
+            // can handle it, otherwise we send the comments normally
+            response.setContentType("text");
+            response.getWriter().println("");
+
+        } else {
+            // Send the JSON as the response
+            response.setContentType("application:json;");
+            response.getWriter().println(convertCommentsToJson());
+        }
     }
 
     /*
@@ -77,10 +85,10 @@ public class DataServlet extends HttpServlet {
 
         // Converts the values into a new UserComment object and adds it to the list
         UserComment newComment = new UserComment(name, text);
-        allComments.add(newComment);
+        allComments.add(0, newComment);
 
         // Redirect back to main page
-        response.sendRedirect("/index.html");
+        response.sendRedirect("/#comments");
 
     }
 
@@ -95,7 +103,7 @@ public class DataServlet extends HttpServlet {
         public String userName;
         public String userComment;
 
-        public void UserComment(String name, String text) {
+        public UserComment(String name, String text) {
             userName = name;
             userComment = text;
         }

@@ -7,48 +7,51 @@
 */
 async function loadComments() {
     const response = await fetch("/data");
-    const msgJson = await response.text();
-    convertJsonStringToArray(msgJson).forEach(createComment);
+    let msgJson = await response.text();
+
+    // remove addiotnal white spaces from the response. This is especially neccessary when receiving no data
+    msgJson = msgJson.trim();
+
+    if(msgJson === "") {
+        // In the case the response is an empty array, we don't want to do anything.
+        return;
+
+    } else {
+
+        // Tries loading all the comments on the website, if an error occurs it alerts the user and tries to refresh.
+        try {
+            JSON.parse(msgJson).forEach(createComment);
+        } catch (err) {
+            alert("There was an error trying to load the comment section.");
+        }
+    }
 }
 
 /*
-* For a given string creates a new div element on the page which contains the paragraph of comment text.
+* For a given json string creates a new div element on the page which contains the paragraph of comment text.
 */
-createComment = (comment) => {
+createComment = (commentJson) => {
 
-    // Initializes a div element to hold a paragraph element with the comment
+    // Initializes the HTML elements needed to fill all the comment data
     let newComment = document.createElement("div");
-    let commentText = document.createElement("p");
-    let node = document.createTextNode(comment);
+    let userNameHolder = document.createElement("p");
+    let userCommentHolder = document.createElement("p");
+
+    // Creates a JS object from the JSON string
+    let jsonObj = JSON.parse(commentJson);
+
+    // Retrieves user comment data from JS object
+    let name = document.createTextNode(jsonObj.userName);
+    let text = document.createTextNode(jsonObj.userComment);
     
-    // Adds the paragraph to the div, and then appends the new div to the website
-    commentText.appendChild(node);
-    newComment.appendChild(commentText);
-    document.getElementById("league-of-legends-comments").appendChild(newComment);
-}
+    // Adds the name and text contents the respective <p> elements
+    userNameHolder.appendChild(name);
+    userCommentHolder.appendChild(text);
 
-/*
-* Takes a string which is formatted as an array, e.g. the result of a JSON string, and converts it
-* to an array. The String being passed in must be in the form of a 1 dimesional array of String values,
-* and of type String. E.g. "["apple","orange"]"
-*/
-convertJsonStringToArray = (arrayAsString) => {
-    
-    console.log(arrayAsString);
+    // Adds the <p> elements and seperator to the div element
+    newComment.appendChild(userNameHolder);
+    newComment.appendChild(userCommentHolder);
 
-    // replaces the quotes and commas seperating string elements from the json for double commas so
-    // they can be sperated later
-    arrayAsString = arrayAsString.replace(/\",\"/g, ",*,");
-    
-    // replaces the delimiting brackets which remain from being in array notation
-    arrayAsString = arrayAsString.replace(/\[\"/, "");
-    arrayAsString = arrayAsString.replace(/\"\]/, "");
-
-
-    // separates all the strings 
-    let arrayOfStrings = arrayAsString.split(",*,");
-
-    console.log(arrayOfStrings);
-
-    return arrayOfStrings;
+    // Adds the new div element to the HTML
+    document.getElementById("comments-container").appendChild(newComment);
 }
