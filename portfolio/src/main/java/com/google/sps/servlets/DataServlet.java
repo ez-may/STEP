@@ -14,6 +14,9 @@
 
 package com.google.sps.servlets;
 
+import com.google.appengine.api.datastore.DatastoreService;
+import com.google.appengine.api.datastore.DatastoreServiceFactory;
+import com.google.appengine.api.datastore.Entity;
 import com.google.gson.Gson;
 import java.util.Arrays;
 import java.util.ArrayList;
@@ -83,9 +86,13 @@ public class DataServlet extends HttpServlet {
         String name = request.getParameter("name");
         String text = request.getParameter("user-comment");
 
-        // Converts the values into a new UserComment object and adds it to the list
-        UserComment newComment = new UserComment(name, text);
-        allComments.add(0, newComment);
+        // Creates the comment entity and adds the data to it
+        Entity newComment = new Entity("Comment");
+        newComment.setProperty("name", name);
+        newComment.setProperty("text", text);
+
+        DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
+        datastore.put(newComment);
 
         // Redirect back to main page
         response.sendRedirect("/#comments");
