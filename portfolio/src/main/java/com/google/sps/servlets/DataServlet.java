@@ -87,10 +87,10 @@ public class DataServlet extends HttpServlet {
 
         // Converts the values into a new UserComment object and adds it to the list
         UserComment newComment = new UserComment(name, text);
-        allComments.add(newComment);
+        allComments.add(0, newComment);
 
         // Redirect back to main page
-        response.sendRedirect("/index.html");
+        response.sendRedirect("/#comments");
 
     }
 
