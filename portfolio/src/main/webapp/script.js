@@ -9,7 +9,7 @@ async function loadComments() {
     const response = await fetch("/data");
     let msgJson = await response.text();
 
-    // remove addiotnal white spaces from the response. This is especially neccessary when receiving no data
+    // remove additional white spaces from the response. This is especially neccessary when receiving no data
     msgJson = msgJson.trim();
 
     if(msgJson === "") {
@@ -17,7 +17,6 @@ async function loadComments() {
         return;
 
     } else {
-
         // Tries loading all the comments on the website, if an error occurs it alerts the user and tries to refresh.
         try {
             JSON.parse(msgJson).forEach(createComment);
@@ -31,7 +30,6 @@ async function loadComments() {
 * For a given json string creates a new div element on the page which contains the paragraph of comment text.
 */
 createComment = (commentJson) => {
-
     // Initializes the HTML elements needed to fill all the comment data
     let newComment = document.createElement("div");
     let userNameHolder = document.createElement("p");

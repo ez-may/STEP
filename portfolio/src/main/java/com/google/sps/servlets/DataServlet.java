@@ -17,6 +17,10 @@ package com.google.sps.servlets;
 import com.google.appengine.api.datastore.DatastoreService;
 import com.google.appengine.api.datastore.DatastoreServiceFactory;
 import com.google.appengine.api.datastore.Entity;
+import com.google.appengine.api.datastore.PreparedQuery;
+import com.google.appengine.api.datastore.Query;
+import com.google.appengine.api.datastore.Query.SortDirection;
+import com.google.gson.Gson;
 import com.google.gson.Gson;
 import java.util.Arrays;
 import java.util.ArrayList;
@@ -30,66 +34,76 @@ import javax.servlet.http.HttpServletResponse;
 @WebServlet("/data")
 public class DataServlet extends HttpServlet {
 
-    private ArrayList<UserComment> allComments = new ArrayList<UserComment>();
+     private ArrayList<String> allComments = new ArrayList<String>();
 
     @Override
     public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
-        
+        doCommentQuery();
+
         if (allComments.isEmpty()) {
             // If there are no comments, then we send an empty string so the FE
             // can handle it, otherwise we send the comments normally
             response.setContentType("text");
             response.getWriter().println("");
-
         } else {
+            SOP(allComments.size());
             // Send the JSON as the response
             response.setContentType("application:json;");
-            response.getWriter().println(convertCommentsToJson());
+            response.getWriter().println(convertToJson(allComments));
         }
     }
 
     /*
-    * Takes all the comments which the servelet is currently storing and converts 
-    * them to JSON, such that the final string should be of the form: 
-    * "[{name: "userName1", comment: userCommnet1"}]"
-    * Note that this implementation allows for the FE to convert this into a list of
-    * strings in JSON format, and should more instance variables be included in a 
-    * UserComment object this function should not be affected.
+    * Converts an object into JSON using Gson, but abstracts the need to make a Gson object in 
+    * different parts of code.
     */
-    private String convertCommentsToJson() {
-        
-        // gson object to access conversion functions
+    private String convertToJson(Object target) {
         Gson gson = new Gson();
+        return gson.toJson(target);
+    }
 
-        // Holds all the JSON objects in an arraylist which can later be converted
-        ArrayList<String> jsonComments = new ArrayList<String>();
+    /**
+    * Makes a query to the datastore for user comment data, creates UserComment objects from that data,
+    * converts the objects to JSON using Gson for ease of implementation, and then adds the String to the
+    * array list.
+    */
+    private void doCommentQuery() {
+        Query query = new Query("Comment").addSort("timestamp", SortDirection.DESCENDING);
 
-        // Goes through each usercomment object and converts it to JSON.
-        // JSON objects are then added to the arraylist  
-        for (UserComment uc : allComments) {
-            
-            // Creates a new reference for each tempstring as it loops through
-            String tempString = new String();
-            tempString = gson.toJson(uc);
+        DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
+        PreparedQuery results = datastore.prepare(query);
 
-            jsonComments.add(tempString);
+        // temporary array list whose reference allComments will point to after this method
+        ArrayList<String> tempList = new ArrayList<String>();
+
+        // Iterates over the comments data, uses them to create new UserCommennt objetcs, and adds them to the list
+        for (Entity comment : results.asIterable()) {
+            long timestamp = (long) comment.getProperty("timestamp");
+            String name = (String) comment.getProperty("name");
+            String text = (String) comment.getProperty("text");
+
+            UserComment tempComment = new UserComment(name, text);
+
+            tempList.add(convertToJson(tempComment));
         }
 
-        // Converts and returns the arraylist of json objects as a json string
-        return gson.toJson(jsonComments);
+        // updates allComments, avoiding duplication
+        allComments = tempList;
     }
 
     @Override
     public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
         
-        // Processes the user comment
-        String name = request.getParameter("name");
-        String text = request.getParameter("user-comment");
+        // Processes the user comment and adds the timestamp
+        String name = request.getParameter("name").trim();
+        String text = request.getParameter("user-comment").trim();
+        Long timestamp = System.currentTimeMillis();
 
         // Creates the comment entity and adds the data to it
         Entity newComment = new Entity("Comment");
         newComment.setProperty("name", name);
         newComment.setProperty("text", text);
+        newComment.setProperty("timestamp", timestamp);
 
         DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
         datastore.put(newComment);
@@ -115,6 +129,13 @@ public class DataServlet extends HttpServlet {
             userComment = text;
         }
 
+    }
+
+    /*
+    * Simple Implementation to reduce need to type print statements in debugging.
+    */
+    private void SOP(Object thing) {
+        System.out.println(thing);
     }
 
 }
