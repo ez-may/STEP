@@ -46,10 +46,17 @@ public class DataServlet extends HttpServlet {
             response.setContentType("text");
             response.getWriter().println("");
         } else {
-            SOP(allComments.size());
-            // Send the JSON as the response
+            // Specifies the response as JSON and reads the response size
             response.setContentType("application:json;");
-            response.getWriter().println(convertToJson(allComments));
+            String responseSize = request.getParameter("size");
+            
+            // sends the response depending on the amount of comments the user specified
+            if (responseSize.equals("all") || Integer.parseInt(responseSize) > allComments.size()) {
+                response.getWriter().println(convertToJson(allComments));
+            } else {
+                int responseSizeVal = Integer.parseInt(responseSize);
+                response.getWriter().println(convertToJson(allComments.subList(0,responseSizeVal)));
+            }
         }
     }
 

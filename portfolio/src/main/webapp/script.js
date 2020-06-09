@@ -5,8 +5,8 @@
 * Makes a request to the servelet for the comments it has stored, and renders each element of the JSON
 * as a new comment.
 */
-async function loadComments() {
-    const response = await fetch("/data");
+async function loadComments(requestSize = 5) {
+    const response = await fetch("/data?size=" + requestSize);
     let msgJson = await response.text();
 
     // remove additional white spaces from the response. This is especially neccessary when receiving no data
