@@ -46,6 +46,7 @@ public class DataServlet extends HttpServlet {
             response.setContentType("text");
             response.getWriter().println("");
         } else {
+            SOP(allComments.size());
             // Send the JSON as the response
             response.setContentType("application:json;");
             response.getWriter().println(convertToJson(allComments));
@@ -72,6 +73,9 @@ public class DataServlet extends HttpServlet {
         DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
         PreparedQuery results = datastore.prepare(query);
 
+        // temporary array list whose reference allComments will point to after this method
+        ArrayList<String> tempList = new ArrayList<String>();
+
         // Iterates over the comments data, uses them to create new UserCommennt objetcs, and adds them to the list
         for (Entity comment : results.asIterable()) {
             long timestamp = (long) comment.getProperty("timestamp");
@@ -80,16 +84,19 @@ public class DataServlet extends HttpServlet {
 
             UserComment tempComment = new UserComment(name, text);
 
-            allComments.add(convertToJson(tempComment));
+            tempList.add(convertToJson(tempComment));
         }
+
+        // updates allComments, avoiding duplication
+        allComments = tempList;
     }
 
     @Override
     public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
         
         // Processes the user comment and adds the timestamp
-        String name = request.getParameter("name");
-        String text = request.getParameter("user-comment");
+        String name = request.getParameter("name").trim();
+        String text = request.getParameter("user-comment").trim();
         Long timestamp = System.currentTimeMillis();
 
         // Creates the comment entity and adds the data to it
@@ -122,6 +129,13 @@ public class DataServlet extends HttpServlet {
             userComment = text;
         }
 
+    }
+
+    /*
+    * Simple Implementation to reduce need to type print statements in debugging.
+    */
+    private void SOP(Object thing) {
+        System.out.println(thing);
     }
 
 }
