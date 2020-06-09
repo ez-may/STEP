@@ -20,6 +20,7 @@ async function loadComments() {
 
         // Tries loading all the comments on the website, if an error occurs it alerts the user and tries to refresh.
         try {
+           clearComments();
             JSON.parse(msgJson).forEach(createComment);
         } catch (err) {
             alert("There was an error trying to load the comment section.");
@@ -31,7 +32,6 @@ async function loadComments() {
 * For a given json string creates a new div element on the page which contains the paragraph of comment text.
 */
 createComment = (commentJson) => {
-
     // Initializes the HTML elements needed to fill all the comment data
     let newComment = document.createElement("div");
     let userNameHolder = document.createElement("p");
@@ -54,4 +54,16 @@ createComment = (commentJson) => {
 
     // Adds the new div element to the HTML
     document.getElementById("comments-container").appendChild(newComment);
+}
+
+/*
+* Clears all the prevoius comment data so it can be loaded again.
+*/
+clearComments = () => {
+    let commentDiv = document.getElementById("comments-container");
+    console.log(document.getElementById("comments-container").children.length)
+    for (let i = 0; i < commentDiv.children.length; i++) {
+        commentDiv.firstChild.remove();
+        console.log("removing child");
+    }
 }
