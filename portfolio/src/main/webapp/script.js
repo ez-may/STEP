@@ -74,3 +74,32 @@ createComment = (commentJson) => {
  clearComments = () => {
    document.getElementById("comments-container").innerHTML = "";
  }
+
+ async function deleteComments() {
+    const response = await fetch("/data?size=all");
+    let msgJson = await response.text();
+
+    // remove additional white spaces from the response.
+    msgJson = msgJson.trim();
+
+    if(msgJson === "") {
+        return;
+    } else {
+        // Processes all the comment ids for deletion
+        let ids = [];
+        let commentList = JSON.parse(msgJson);
+        for (i = 0; i < commentList.length; i++) {
+            ids.push(JSON.parse(commentList[i]).commentId);
+        }
+
+        // customization options for request
+        let myInit = {
+            method: "POST",
+            body: new FormData()
+        };
+
+        // Adds all the keys to be deleted to the form
+        myInit.body.append("idList", ids.toString());
+        await fetch("/delete-data", myInit);
+    }
+ }
