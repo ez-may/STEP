@@ -8,7 +8,7 @@
 
 /*
  * Makes a request to the servelet for the comments it has stored, and renders each element of the JSON
- * as a new comment.
+ * as a new comment. Default value is 5 for the initial onload call made by the HTML body. 
  */
 async function loadComments(requestSize = 5) {
     const response = await fetch("/data?size=" + requestSize);
