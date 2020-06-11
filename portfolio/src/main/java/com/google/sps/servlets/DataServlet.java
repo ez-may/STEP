@@ -21,7 +21,6 @@ import com.google.appengine.api.datastore.PreparedQuery;
 import com.google.appengine.api.datastore.Query;
 import com.google.appengine.api.datastore.Query.SortDirection;
 import com.google.gson.Gson;
-import com.google.gson.Gson;
 import java.util.Arrays;
 import java.util.ArrayList;
 import java.io.IOException;
@@ -46,7 +45,6 @@ public class DataServlet extends HttpServlet {
             response.setContentType("text");
             response.getWriter().println("");
         } else {
-            SOP(allComments.size());
             // Send the JSON as the response
             response.setContentType("application:json;");
             response.getWriter().println(convertToJson(allComments));
