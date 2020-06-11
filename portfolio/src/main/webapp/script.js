@@ -92,14 +92,16 @@ createComment = (commentJson) => {
             ids.push(JSON.parse(commentList[i]).commentId);
         }
 
+        let tempForm = new FormData();
+        tempForm.append("idList", ids.toString());
+
         // customization options for request
         let myInit = {
             method: "POST",
-            body: new FormData()
+            headers: {'Content-Type': 'application/x-www-form-urlencoded'},
+            body: new URLSearchParams(tempForm)
         };
 
-        // Adds all the keys to be deleted to the form
-        myInit.body.append("idList", ids.toString());
         await fetch("/delete-data", myInit);
     }
  }
