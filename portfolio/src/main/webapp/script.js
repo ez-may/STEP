@@ -82,7 +82,7 @@ createComment = (commentJson) => {
     // remove additional white spaces from the response.
     msgJson = msgJson.trim();
 
-    if(msgJson === "") {
+    if (msgJson === "") {
         return;
     } else {
         // Processes all the comment ids for deletion
