@@ -1,15 +1,20 @@
 // TODO:(matwsuaz) : Update with logic to allow the implementation of a rotating image gallery with buttons, changing captions depending on what
 // image is being displayed, and a navigation bar which allows the user to navigate to different scroll positions.
 
+// TODO(matwsuaz) : Include a page number view for the comment section. Because the limit to viewing 
+// is to either see a set amount at a time, or all of them, users need a way to navigate through
+// comments. I.e. if there are 50 comments and the user decides to view only 5 at a time, they should
+// arrows to navigate back and forth from the first 5, to the next 5, and so on. 
+
 /*
-* Makes a request to the servelet for the comments it has stored, and renders each element of the JSON
-* as a new comment.
-*/
-async function loadComments() {
-    const response = await fetch("/data");
+ * Makes a request to the servelet for the comments it has stored, and renders each element of the JSON
+ * as a new comment. Default value is 5 for the initial onload call made by the HTML body. 
+ */
+async function loadComments(requestSize = 5) {
+    const response = await fetch("/data?size=" + requestSize);
     let msgJson = await response.text();
 
-    // remove addiotnal white spaces from the response. This is especially neccessary when receiving no data
+    // remove additional white spaces from the response. This is especially neccessary when receiving no data
     msgJson = msgJson.trim();
 
     if(msgJson === "") {
@@ -17,7 +22,6 @@ async function loadComments() {
         return;
 
     } else {
-
         // Tries loading all the comments on the website, if an error occurs it alerts the user and tries to refresh.
         try {
             JSON.parse(msgJson).forEach(createComment);
@@ -28,10 +32,18 @@ async function loadComments() {
 }
 
 /*
-* For a given json string creates a new div element on the page which contains the paragraph of comment text.
-*/
-createComment = (commentJson) => {
+ * When the user updates the amount of comments to be displayed, this function makes sure to
+ * update the page.
+ */
+updateCommentDisplay = (requestSize) => {
+    clearComments();
+    loadComments(requestSize);
+}
 
+/*
+ * For a given json string creates a new div element on the page which contains the paragraph of comment text.
+ */
+createComment = (commentJson) => {
     // Initializes the HTML elements needed to fill all the comment data
     let newComment = document.createElement("div");
     let userNameHolder = document.createElement("p");
@@ -55,3 +67,10 @@ createComment = (commentJson) => {
     // Adds the new div element to the HTML
     document.getElementById("comments-container").appendChild(newComment);
 }
+
+/*
+ * Clears the div with all the comment data.
+ */
+ clearComments = () => {
+   document.getElementById("comments-container").innerHTML = "";
+ }
