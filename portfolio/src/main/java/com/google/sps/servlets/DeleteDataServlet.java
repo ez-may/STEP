@@ -19,6 +19,7 @@ import com.google.appengine.api.datastore.DatastoreServiceFactory;
 import com.google.appengine.api.datastore.Key;
 import com.google.appengine.api.datastore.KeyFactory;
 import java.io.IOException;
+import java.util.Arrays;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -33,11 +34,11 @@ public class DeleteDataServlet extends HttpServlet {
         // Processes the comment ids into an array of long values
         String idList = request.getParameter("idList");
         String[] ids = idList.split(",");
-        SOP(ids.toString());
+        
         // deletes all the entities in data store with the ids
         for (int i = 0; i < ids.length; i++) {
             Long tempIdNum = Long.parseLong(ids[i]);
-            Key commentKey = KeyFactory.createKey("comment", tempIdNum);
+            Key commentKey = KeyFactory.createKey("Comment", tempIdNum);
             DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
             datastore.delete(commentKey);
         }
