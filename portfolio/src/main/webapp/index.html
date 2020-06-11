@@ -142,6 +142,14 @@
             <h1>Comments</h1>
         </div>
         <div class="sections" id="comments"> 
+            <label for="comments-to-show">Max Comments Displayed:</label>
+            <select name="comments-to-show" id="comments-to-show" onchange="updateCommentDisplay(this.value)">
+                <option value="5" selected>5</option>
+                <option value="10">10</option>
+                <option value="15">15</option>
+                <option value="25">25</option>
+                <option value="all">All</option>
+            </select>
             <div id="comments-container">
             </div>
             <form id="new-comment" action="/data" method="POST">
