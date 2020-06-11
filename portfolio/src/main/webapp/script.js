@@ -7,9 +7,9 @@
 // arrows to navigate back and forth from the first 5, to the next 5, and so on. 
 
 /*
-* Makes a request to the servelet for the comments it has stored, and renders each element of the JSON
-* as a new comment.
-*/
+ * Makes a request to the servelet for the comments it has stored, and renders each element of the JSON
+ * as a new comment. Default value is 5 for the initial onload call made by the HTML body. 
+ */
 async function loadComments(requestSize = 5) {
     const response = await fetch("/data?size=" + requestSize);
     let msgJson = await response.text();
@@ -32,17 +32,17 @@ async function loadComments(requestSize = 5) {
 }
 
 /*
-* When the user updates the amount of comments to be displayed, this function makes sure to
-* update the page.
-*/
+ * When the user updates the amount of comments to be displayed, this function makes sure to
+ * update the page.
+ */
 updateCommentDisplay = (requestSize) => {
     clearComments();
     loadComments(requestSize);
 }
 
 /*
-* For a given json string creates a new div element on the page which contains the paragraph of comment text.
-*/
+ * For a given json string creates a new div element on the page which contains the paragraph of comment text.
+ */
 createComment = (commentJson) => {
     // Initializes the HTML elements needed to fill all the comment data
     let newComment = document.createElement("div");
@@ -69,7 +69,7 @@ createComment = (commentJson) => {
 }
 
 /*
-* Clears the div with all the comment data.
+ * Clears the div with all the comment data.
  */
  clearComments = () => {
    document.getElementById("comments-container").innerHTML = "";

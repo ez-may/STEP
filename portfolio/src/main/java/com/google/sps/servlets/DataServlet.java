@@ -36,11 +36,9 @@ import javax.servlet.http.HttpServletResponse;
 @WebServlet("/data")
 public class DataServlet extends HttpServlet {
 
-     private ArrayList<String> allComments = new ArrayList<String>();
-
     @Override
     public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
-        doCommentQuery();
+        ArrayList<String> allComments = doCommentQuery();
 
         if (allComments.isEmpty()) {
             // If there are no comments, then we send an empty string so the FE
@@ -57,7 +55,7 @@ public class DataServlet extends HttpServlet {
                 response.getWriter().println(convertToJson(allComments));
             } else {
                 int responseSizeVal = Integer.parseInt(responseSize);
-                response.getWriter().println(convertToJson(allComments.subList(0,responseSizeVal)));
+                response.getWriter().println(convertToJson(allComments.subList(0, responseSizeVal)));
             }
         }
     }
@@ -73,19 +71,20 @@ public class DataServlet extends HttpServlet {
 
     /**
     * Makes a query to the datastore for user comment data, creates UserComment objects from that data,
-    * converts the objects to JSON using Gson for ease of implementation, and then adds the String to the
-    * array list.
+    * converts the objects to JSON using Gson for ease of implementation, and returns an array list
+    * of type string with the data.
     */
-    private void doCommentQuery() {
+    private ArrayList<String> doCommentQuery() {
         Query query = new Query("Comment").addSort("timestamp", SortDirection.DESCENDING);
 
         DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
         PreparedQuery results = datastore.prepare(query);
 
-        // temporary array list whose reference allComments will point to after this method
+        // temporary array list to return from this method
         ArrayList<String> tempList = new ArrayList<String>();
 
-        // Iterates over the comments data, uses them to create new UserCommennt objetcs, and adds them to the list
+        // Iterates over the comments data, uses them to create new UserCommennt objetcs, and adds them
+        // to the list
         for (Entity comment : results.asIterable()) {
             long timestamp = (long) comment.getProperty("timestamp");
             long id = comment.getKey().getId();
@@ -97,8 +96,8 @@ public class DataServlet extends HttpServlet {
             tempList.add(convertToJson(tempComment));
         }
 
-        // updates allComments, avoiding duplication
-        allComments = tempList;
+        // returns the templist with the datastore comments
+        return tempList;
     }
 
     @Override
