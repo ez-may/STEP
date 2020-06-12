@@ -21,7 +21,6 @@ import com.google.appengine.api.datastore.PreparedQuery;
 import com.google.appengine.api.datastore.Query;
 import com.google.appengine.api.datastore.Query.SortDirection;
 import com.google.gson.Gson;
-import com.google.gson.Gson;
 import java.util.Arrays;
 import java.util.ArrayList;
 import java.io.IOException;
@@ -30,7 +29,9 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-/** Servlet that returns some example content. TODO: modify this file to handle comments data */
+/** Servlet that handles comment data. It can make a request to datastore to write  
+* data and retrieve it.
+*/
 @WebServlet("/data")
 public class DataServlet extends HttpServlet {
 
@@ -85,10 +86,11 @@ public class DataServlet extends HttpServlet {
         // to the list
         for (Entity comment : results.asIterable()) {
             long timestamp = (long) comment.getProperty("timestamp");
+            long id = comment.getKey().getId();
             String name = (String) comment.getProperty("name");
             String text = (String) comment.getProperty("text");
 
-            UserComment tempComment = new UserComment(name, text);
+            UserComment tempComment = new UserComment(name, text, timestamp, id);
 
             tempList.add(convertToJson(tempComment));
         }
@@ -129,10 +131,14 @@ public class DataServlet extends HttpServlet {
 
         public String userName;
         public String userComment;
+        public long commentTimestamp;
+        public long commentId;
 
-        public UserComment(String name, String text) {
+        public UserComment(String name, String text, long timestamp, long id) {
             userName = name;
             userComment = text;
+            commentTimestamp = timestamp;
+            commentId = id;
         }
 
     }
