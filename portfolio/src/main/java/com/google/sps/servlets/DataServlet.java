@@ -29,8 +29,9 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-/** Servlet that handles comment data. It can make a request to datastore to write  
- * data and retrieve it.
+/** 
+ * Returns comments from the datastore depending on the size request made by the browser. Also handles
+ * receiving requests to post new comment data.
  */
 @WebServlet("/data")
 public class DataServlet extends HttpServlet {
