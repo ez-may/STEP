@@ -25,7 +25,9 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-/** Servlet that returns some example content. TODO: modify this file to handle comments data */
+/** 
+ * Servlet that deletes comment data based on the ids it receives.
+ **/
 @WebServlet("/delete-data")
 public class DeleteDataServlet extends HttpServlet {
 
@@ -44,9 +46,9 @@ public class DeleteDataServlet extends HttpServlet {
         }
    }
 
-    /*
-    * Simple Implementation to reduce need to type print statements in debugging.
-    */
+    /**
+     * Simple Implementation to reduce need to type print statements in debugging.
+     **/
     private void SOP(Object thing) {
         System.out.println(thing);
     }
