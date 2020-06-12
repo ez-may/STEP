@@ -97,8 +97,11 @@ async function deleteComments() {
             deleteComment(JSON.parse(commentList[i]).commentId);
         }
     
-    updateCommentDisplay("all");
-    
+    // Clears the comment section and redirects to the comment section of the webpage. Because of the delay to update datastore,
+    // clearing the comments from the HTML gives the datastore time to finish resolving the deletion requests until the user requests data again.
+    // Servlet failed to redirect properly so this task is assigned here.
+    clearComments();
+    location.assign(location.origin + "/#comments");
     }
 }
 
@@ -116,11 +119,11 @@ async function deleteComment(id) {
      * the exact same way.
      */
     let myInit = {
-        method: "POST",
+        body: new URLSearchParams(tempForm),
         headers: {'Content-Type': 'application/x-www-form-urlencoded'},
-        body: new URLSearchParams(tempForm)
+        method: "POST",
+        redirect: "follow"
     };
-
+    
     await fetch("/delete-data", myInit);
-
 }

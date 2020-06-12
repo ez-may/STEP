@@ -42,9 +42,6 @@ public class DeleteDataServlet extends HttpServlet {
             DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
             datastore.delete(commentKey);
         }
-
-        // Redirect back to main page
-        response.sendRedirect("/#comments");
    }
 
     /*
