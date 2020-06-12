@@ -30,9 +30,9 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 /** 
- * Returns comments from the datastore depending on the size request made by the browser. Also handles
- * receiving requests to post new comment data.
- */
+ * Returns comments from the datastore depending on the size request made by
+ * the browser. Also handles receiving requests to post new comment data.
+ **/
 @WebServlet("/data")
 public class DataServlet extends HttpServlet {
 
@@ -50,7 +50,8 @@ public class DataServlet extends HttpServlet {
             response.setContentType("application:json;");
             String responseSize = request.getParameter("size");
             
-            // sends the response depending on the amount of comments the user specified
+            // sends the response depending on the 
+            // amount of comments the user specified
             if (responseSize.equals("all") || Integer.parseInt(responseSize) > allComments.size()) {
                 response.getWriter().println(convertToJson(allComments));
             } else {
@@ -61,8 +62,8 @@ public class DataServlet extends HttpServlet {
     }
 
     /**
-     * Converts an object into JSON using Gson, but abstracts the need to make a Gson object in 
-     * different parts of code.
+     * Converts an object into JSON using Gson, but abstracts the need to make
+     * a Gson object in different parts of code.
      **/
     private String convertToJson(Object target) {
         Gson gson = new Gson();
@@ -70,9 +71,9 @@ public class DataServlet extends HttpServlet {
     }
 
     /**
-     * Makes a query to the datastore for user comment data, creates UserComment objects from that data,
-     * converts the objects to JSON using Gson for ease of implementation, and returns an array list
-     * of type string with the data.
+     * Makes a query to the datastore for user comment data, creates UserComment
+     * objects from that data, converts the objects to JSON using Gson for ease
+     * of implementation, and returns an array list of type string with the data.
      **/
     private ArrayList<String> doCommentQuery() {
         Query query = new Query("Comment").addSort("timestamp", SortDirection.DESCENDING);
@@ -144,9 +145,9 @@ public class DataServlet extends HttpServlet {
 
     }
 
-    /*
+    /**
      * Simple Implementation to reduce need to type print statements in debugging.
-     */
+     **/
     private void SOP(Object thing) {
         System.out.println(thing);
     }
