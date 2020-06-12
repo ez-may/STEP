@@ -1,3 +1,8 @@
+/*
+ * TODO(matwsuaz): Update image properties so that images stop expanding as soon
+ * as they rech max width OR height. Currently there is a bug where they expand until
+ * the image fits the max width. 
+ */
 #about,
 #comments,
 #interests,
