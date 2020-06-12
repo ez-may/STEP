@@ -17,7 +17,7 @@ async function loadComments(requestSize = 5) {
     // remove additional white spaces from the response. This is especially neccessary when receiving no data
     msgJson = msgJson.trim();
 
-    if(msgJson === "") {
+    if (msgJson === "") {
         // In the case the response is an empty array, we don't want to do anything.
         return;
 
