@@ -122,7 +122,6 @@ async function deleteComment(id) {
         body: new URLSearchParams(tempForm),
         headers: {'Content-Type': 'application/x-www-form-urlencoded'},
         method: "POST",
-        redirect: "follow"
     };
     
     await fetch("/delete-data", myInit);
