@@ -73,9 +73,15 @@ createComment = (commentJson) => {
  */
  clearComments = () => {
    document.getElementById("comments-container").innerHTML = "";
- }
+ 
+}
 
- async function deleteComments() {
+/* TODO(matwsuaz): abstract this functionality to the servlet to delete all the ids from datastore to impove preformance.
+ * Having the FE send all the ID data to the server is not a good idea, and isn't necessary. 
+ *
+ * Removes all the comments from datastore by making successive calls to deleteComment(id).
+ */
+async function deleteComments() {
     const response = await fetch("/data?size=all");
     let msgJson = await response.text();
 
@@ -86,22 +92,35 @@ createComment = (commentJson) => {
         return;
     } else {
         // Processes all the comment ids for deletion
-        let ids = [];
         let commentList = JSON.parse(msgJson);
         for (i = 0; i < commentList.length; i++) {
-            ids.push(JSON.parse(commentList[i]).commentId);
+            deleteComment(JSON.parse(commentList[i]).commentId);
         }
-
-        let tempForm = new FormData();
-        tempForm.append("idList", ids.toString());
-
-        // customization options for request
-        let myInit = {
-            method: "POST",
-            headers: {'Content-Type': 'application/x-www-form-urlencoded'},
-            body: new URLSearchParams(tempForm)
-        };
-
-        await fetch("/delete-data", myInit);
+    
+    updateCommentDisplay("all");
+    
     }
- }
+}
+
+/*
+ * Takes an id and makes a request to the servlet to remove it.
+ */
+async function deleteComment(id) {
+
+    let tempForm = new FormData();
+    tempForm.append("idList", id);
+
+    /* Customization options for request.
+     * The header and body parameters make sure that the HTTP request sends the form data in such a way that the servlet can
+     * access it. With this code the form can be read as if it had been sent by an HTML form and the servlet can process it 
+     * the exact same way.
+     */
+    let myInit = {
+        method: "POST",
+        headers: {'Content-Type': 'application/x-www-form-urlencoded'},
+        body: new URLSearchParams(tempForm)
+    };
+
+    await fetch("/delete-data", myInit);
+
+}
