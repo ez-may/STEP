@@ -30,8 +30,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 /** Servlet that handles comment data. It can make a request to datastore to write  
-* data and retrieve it.
-*/
+ * data and retrieve it.
+ */
 @WebServlet("/data")
 public class DataServlet extends HttpServlet {
 
@@ -59,20 +59,20 @@ public class DataServlet extends HttpServlet {
         }
     }
 
-    /*
-    * Converts an object into JSON using Gson, but abstracts the need to make a Gson object in 
-    * different parts of code.
-    */
+    /**
+     * Converts an object into JSON using Gson, but abstracts the need to make a Gson object in 
+     * different parts of code.
+     **/
     private String convertToJson(Object target) {
         Gson gson = new Gson();
         return gson.toJson(target);
     }
 
     /**
-    * Makes a query to the datastore for user comment data, creates UserComment objects from that data,
-    * converts the objects to JSON using Gson for ease of implementation, and returns an array list
-    * of type string with the data.
-    */
+     * Makes a query to the datastore for user comment data, creates UserComment objects from that data,
+     * converts the objects to JSON using Gson for ease of implementation, and returns an array list
+     * of type string with the data.
+     **/
     private ArrayList<String> doCommentQuery() {
         Query query = new Query("Comment").addSort("timestamp", SortDirection.DESCENDING);
 
@@ -122,11 +122,11 @@ public class DataServlet extends HttpServlet {
     }
 
     /**
-    * User comment class which allows for the easy grouping of information related
-    * to a comment. Because of the implementation of GSON, having all the information
-    * related to a comment in a single object allows it to easily be converted to JSON
-    * later and will make FE parsing easier.
-    **/
+     * User comment class which allows for the easy grouping of information related
+     * to a comment. Because of the implementation of GSON, having all the information
+     * related to a comment in a single object allows it to easily be converted to JSON
+     * later and will make FE parsing easier.
+     **/
     private class UserComment {
 
         public String userName;
@@ -144,8 +144,8 @@ public class DataServlet extends HttpServlet {
     }
 
     /*
-    * Simple Implementation to reduce need to type print statements in debugging.
-    */
+     * Simple Implementation to reduce need to type print statements in debugging.
+     */
     private void SOP(Object thing) {
         System.out.println(thing);
     }
