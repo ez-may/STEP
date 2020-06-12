@@ -20,7 +20,6 @@ async function loadComments(requestSize = 5) {
     if (msgJson === "") {
         // In the case the response is an empty array, we don't want to do anything.
         return;
-
     } else {
         // Tries loading all the comments on the website, if an error occurs it alerts the user and tries to refresh.
         try {
