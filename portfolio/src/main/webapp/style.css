@@ -6,6 +6,7 @@
 #about,
 #comments,
 #interests,
+#projects,
 #welcome {
     border: 1px solid rgba(94, 94, 94, 0.7);
 }
@@ -68,14 +69,16 @@ h1 {
     text-align: center;
 }
 
-#interests {
+#interests,
+#projects {
     align-items: flex-start;
     display: flex;
     flex-wrap: wrap;
     justify-content: space-evenly;
 }
 
-.interest-container {
+.interest-container,
+.project-container {
     border: 1px solid rgba(94, 94, 94, 0.7);
     box-sizing: border-box;
     display: flex;
@@ -97,12 +100,14 @@ h1 {
 }
 
 .interest-img-container,
-.interest-text {
+.interest-text,
+.project-text {
     box-sizing: border-box;
     max-width: 100%;
 }
 
-.interest-text {
+.interest-text,
+.project-text {
     font-size: 22px;
     min-width: 200px;
     margin: 5px 0px 0px 0px;
@@ -132,6 +137,10 @@ h1 {
     display: flex;
     flex-direction: column;
     margin: 10px 0px 0px 80px;
+}
+
+.project-button {
+    max-width: max-content;
 }
 
 .right-side-text-container {
