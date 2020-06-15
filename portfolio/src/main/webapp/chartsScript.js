@@ -19,24 +19,24 @@ google.charts.setOnLoadCallback(drawChart);
 /**
  * Creates a basic chart and displays it on the page.
  **/
-drawchart = () => {
-    const data = new google.visualization.DataTable();
-    data.addColumn("string", "Game", "game");
-    data.addColumn("number", "Hours Played", "hours");
+function drawChart() {
+    var data = new google.visualization.DataTable();
+    data.addColumn('string', 'Task');
+    data.addColumn('number', 'Hours per Day');
     data.addRows([
-        ["Don't Starve Together", 146],
-        ["Monster Hunter World", 156]
-        ["Overcooked!2", 10],
-        ["Oxygen Not Included", 234],
-        ["Sid Meirer's Civilization 6", 50]
-    ])
+        ['Dont Starve Together', 146],
+        ['Monster Hunter World', 156],
+        ['Overcooked!2', 10],
+        ['Oxygen Not Included', 234],
+        ['Sid Meirers Civilization 6', 50]
+    ]);       
 
     const options = {
         pieHole: 0.4,
         title: "My favorite Games On Steam",
     };
 
-    const chart = new google.visualization.Piechart(
+    const chart = new google.visualization.PieChart(
         document.getElementById("games-on-steam-chart"));
     chart.draw(data, options);
 }
