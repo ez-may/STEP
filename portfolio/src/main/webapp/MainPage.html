@@ -1,10 +1,14 @@
+<!--TODO(matwsuaz): Put text through spell checker to find final typos.-->
+<!--TODO(matwsuaz): Update text and interests.-->
+<!--TODO(matwsuaz): URGENT. Need to fix bug where first page user loads isn't
+    displaying properly-->
 <!DOCTYPE html>
 <html>
   <head>
     <meta charset="UTF-8">
     <title>Portfolio</title>
     <link rel="stylesheet" href="style.css">
-    <script src="script.js"></script>
+    <script src="mainScript.js"></script>
   </head>
   <body onLoad="loadComments()">
         <div class="section-header">
@@ -136,6 +140,17 @@
                         I want to help build a future where software doesn't replace people,
                         but instead empowers them to do greater things they couldn't have before.</p>
                 </div>
+            </div>
+        </div>
+        <div class="section-header">
+            <h1>Projects - STEP &amp; Other</h1>
+        </div>
+        <div class="sections" id="projects">
+            <div class="project-container">
+                <div class="project-text">
+                    <p>This is the charts API project I implemented.<p>
+                </div>
+                <button onclick="redirectToChartsPage()" class="project-button">View Project</button>
             </div>
         </div>
         <div class="section-header">
