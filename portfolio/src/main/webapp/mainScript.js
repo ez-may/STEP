@@ -11,10 +11,52 @@
  * back and forth from the first 5, to the next 5, and so on. 
  **/
 
+/**
+ * Manages the logic for the initial load of the main page by calling functions
+ * and managing logic based on servlet responses.
+ */
 async function loadPage() { 
+    checkUserLoggedIn();
+}
+
+/******************************************************************************
+ ******************************************************************************
+ **********************Authentication FEATURE RELATED CODE*********************
+ ******************************************************************************
+ *****************************************************************************/
+
+/**
+ * Makes the request to the data servlet, and makes sure the response from the
+ * servlet isn't a login URL. If the response is a login URL, it redirects,
+ * otherwise it returns the JSON with comment data the serlet responds with.
+ */
+async function checkUserLoggedIn() {
+    /**
+     * Makes the initial request. Determines the content type being sent and
+     * trims additional white space.
+     */
     let response = await fetch("/data");
-    let loginUrl = await response.text();
-    location.assign(loginUrl);
+    let responseType = response.headers.get("Content-Type");
+    let responseContent = await response.text();
+    responseContent = responseContent.trim();
+    
+    /*
+     * If the content type is 'text' and it contains the string "login?" then
+     * it means the servlet replied with a login link, otherwise it replied
+     * with an empty string due to the current implementation of the
+     * data servlet. The actionToTake variable is returned as an object so
+     * another function can use the "action" key to control logic in an "if"
+     * statement and then acces the "content" key to complete the step.
+     */
+     let actionToTake = {content: responseContent};
+     if (responseType === "text" && responseContent.indexOf("login?") != -1) {
+        Object.defineProperty(actionToTake, "action", {value: "redirect", enumerable: true});
+        return actionToTake;
+     } else {
+        Object.defineProperty(actionToTake, "action", {value: "read", enumerable: true});
+        return actionToTake;
+     }
+    
 }
 
 /******************************************************************************
@@ -25,8 +67,8 @@ async function loadPage() {
 
 /**
  * Makes a request to the servelet for the comments it has stored, and renders
- * each element of the JSON
- * as a new comment. Default value is 5 for the initial onload call made by the HTML body. 
+ * each element of the JSON as a new comment. Default value is 5 for the initial
+ * onload call made by the HTML body. 
  **/
 async function loadComments(requestSize = 5) {
     const response = await fetch("/data?size=" + requestSize);
