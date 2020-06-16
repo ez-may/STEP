@@ -17,7 +17,14 @@
  */
 async function loadPage() { 
     let responseData = await getServletData();
-    console.log(responseData);
+
+    if (responseData.action.trim() === "redirect") {
+        location.assign(responseData.content.trim());
+        return;
+    } else {
+        renderComments(responseData.content.trim());
+        return;
+    }
 }
 
 /******************************************************************************
@@ -37,7 +44,7 @@ async function getServletData() {
      * Makes the initial request. Determines the content type being sent and
      * trims additional white space.
      */
-    let response = await fetch("/data");
+    let response = await fetch("/data?size=5"); // Default to show 5 comments
     let responseType = response.headers.get("Content-Type");
     let responseContent = await response.text();
     responseContent = responseContent.trim();
@@ -51,11 +58,14 @@ async function getServletData() {
      * statement and then acces the "content" key to complete the step.
      */
      if (responseType === "text" && responseContent.indexOf("login?") != -1) {
-        return {content: responseContent, action: {value: "redirect", enumerable: true}};
+        return {content: responseContent, action: "redirect"};
     } else {
-        return {content: responseContent, action: {value: "read", enumerable: true}};
+        return {content: responseContent, action: "read"};
     }
 }
+
+
+
 
 /******************************************************************************
  ******************************************************************************
@@ -64,18 +74,20 @@ async function getServletData() {
  *****************************************************************************/
 
 /**
- * Makes a request to the servelet for the comments it has stored, and renders
- * each element of the JSON as a new comment. Default value is 5 for the initial
- * onload call made by the HTML body. 
+ * Makes a request to the servelet for the comments it has stored, and then
+ * makes a call to have it rendered.
  **/
-async function loadComments(requestSize = 5) {
+async function loadComments(requestSize) {
     const response = await fetch("/data?size=" + requestSize);
     let msgJson = await response.text();
 
-    // remove additional white spaces from the response. 
-    // This is especially neccessary when receiving no data
-    msgJson = msgJson.trim();
+    renderComments(msgJson.trim());
+}
 
+/**
+ * Takes a JSON object with comment data and renders the comments on the page. 
+ */
+renderComments  = (msgJson) => {
     if (msgJson === "") {
         // In the case the response is an empty array, we don't 
         // want to do anything.
@@ -85,9 +97,11 @@ async function loadComments(requestSize = 5) {
         // alerts the user and tries to refresh.
         try {
             JSON.parse(msgJson).forEach(createComment);
+            return;
         } catch (err) {
             alert("There was an error trying to load the comment section.");
             clearComments();
+            return;
         }
     }
 }
