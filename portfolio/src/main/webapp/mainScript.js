@@ -11,6 +11,12 @@
  * back and forth from the first 5, to the next 5, and so on. 
  **/
 
+async function loadPage() { 
+    let response = await fetch("/data");
+    let loginUrl = await response.text();
+    location.assign(loginUrl);
+}
+
 /******************************************************************************
  ******************************************************************************
  *************************COMMENT FEATURE RELATED CODE*************************
@@ -41,6 +47,7 @@ async function loadComments(requestSize = 5) {
             JSON.parse(msgJson).forEach(createComment);
         } catch (err) {
             alert("There was an error trying to load the comment section.");
+            clearComments();
         }
     }
 }

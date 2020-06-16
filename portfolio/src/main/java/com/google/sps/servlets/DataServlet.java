@@ -20,6 +20,9 @@ import com.google.appengine.api.datastore.Entity;
 import com.google.appengine.api.datastore.PreparedQuery;
 import com.google.appengine.api.datastore.Query;
 import com.google.appengine.api.datastore.Query.SortDirection;
+import com.google.appengine.api.users.User;
+import com.google.appengine.api.users.UserService;
+import com.google.appengine.api.users.UserServiceFactory;
 import com.google.gson.Gson;
 import java.util.Arrays;
 import java.util.ArrayList;
@@ -39,6 +42,14 @@ public class DataServlet extends HttpServlet {
     @Override
     public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
         ArrayList<String> allComments = doCommentQuery();
+        UserService userService = UserServiceFactory.getUserService();
+
+        if (!userService.isUserLoggedIn()) {
+            String loginUrl = userService.createLoginURL("/MainPage.html");
+            response.setContentType("text");
+            response.getWriter().println(loginUrl);
+            return;
+        }
 
         if (allComments.isEmpty()) {
             // If there are no comments, then we send an empty string so the FE
