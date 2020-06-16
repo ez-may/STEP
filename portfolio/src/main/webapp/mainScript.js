@@ -16,7 +16,7 @@
  * and managing logic based on servlet responses.
  */
 async function loadPage() { 
-    checkUserLoggedIn();
+    let responseData = getServletData();
 }
 
 /******************************************************************************
@@ -26,11 +26,12 @@ async function loadPage() {
  *****************************************************************************/
 
 /**
- * Makes the request to the data servlet, and makes sure the response from the
- * servlet isn't a login URL. If the response is a login URL, it redirects,
- * otherwise it returns the JSON with comment data the serlet responds with.
+ * Makes the request to the data servlet, and processes the response so it can
+ * be returned and used by other functions. Returns an object with the response
+ * data and a string value specifying what to do with the response data, "read"
+ * or "redirect."
  */
-async function checkUserLoggedIn() {
+async function getServletData() {
     /**
      * Makes the initial request. Determines the content type being sent and
      * trims additional white space.
