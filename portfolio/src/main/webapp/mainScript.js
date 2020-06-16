@@ -16,7 +16,8 @@
  * and managing logic based on servlet responses.
  */
 async function loadPage() { 
-    let responseData = getServletData();
+    let responseData = await getServletData();
+    console.log(responseData);
 }
 
 /******************************************************************************
@@ -49,15 +50,11 @@ async function getServletData() {
      * another function can use the "action" key to control logic in an "if"
      * statement and then acces the "content" key to complete the step.
      */
-     let actionToTake = {content: responseContent};
      if (responseType === "text" && responseContent.indexOf("login?") != -1) {
-        Object.defineProperty(actionToTake, "action", {value: "redirect", enumerable: true});
-        return actionToTake;
-     } else {
-        Object.defineProperty(actionToTake, "action", {value: "read", enumerable: true});
-        return actionToTake;
-     }
-    
+        return {content: responseContent, action: {value: "redirect", enumerable: true}};
+    } else {
+        return {content: responseContent, action: {value: "read", enumerable: true}};
+    }
 }
 
 /******************************************************************************
