@@ -19,11 +19,15 @@ async function loadPage() {
     let responseData = await getServletData();
 
     if (responseData.action.trim() === "redirect") {
-        location.assign(responseData.content.trim());
-        
+        renderLoginStatus({
+            name: "Anonymous",
+            status: "You Are Not Logged In",
+            action: "Login Here",
+            link: responseData.content.trim(),
+            });
         return;
     } else {
-        renderComments(responseData.content.trim());
+        
         return;
     }
 }
@@ -70,7 +74,7 @@ async function getServletData() {
  * The status object needs to have the following keys:
  * name, status, action, link.
  */
-async function displayLoginStatus(statusObj) {
+async function renderLoginStatus(statusObj) {
     // The div to hold all the HTML elements created here
     let statusDiv = document.createElement("div");
 
