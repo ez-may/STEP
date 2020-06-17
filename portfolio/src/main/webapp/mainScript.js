@@ -20,9 +20,9 @@ async function loadPage() {
 
     if (responseData.action.trim() === "redirect") {
         renderLoginStatus({
-            name: "Anonymous",
-            status: "You Are Not Logged In",
-            action: "Login Here",
+            name: "Hello Anonymous User!",
+            status: "You are not logged in.",
+            action: "Please login here.",
             link: responseData.content.trim(),
             });
         return;
@@ -108,7 +108,7 @@ async function renderLoginStatus(statusObj) {
 
     // Adds the new div element to the HTML
     loginStatusBar.appendChild(statusDiv);
-    
+    console.log("the end of render page");
 }
 
 
