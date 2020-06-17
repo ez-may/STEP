@@ -20,6 +20,7 @@ async function loadPage() {
 
     if (responseData.action.trim() === "redirect") {
         location.assign(responseData.content.trim());
+        
         return;
     } else {
         renderComments(responseData.content.trim());
@@ -64,7 +65,47 @@ async function getServletData() {
     }
 }
 
+/**
+ * Takes in a status object with data used to update the html status bar.
+ * The status object needs to have the following keys:
+ * name, status, action, link.
+ */
+async function displayLoginStatus(statusObj) {
+    // The div to hold all the HTML elements created here
+    let statusDiv = document.createElement("div");
 
+    // A welcome message + user's name, or 'Anon' if they aren't logged in
+    let name = document.createElement("p");
+    
+    // A message which is filled if the user isn't logged in
+    let status = document.createElement("p");
+    
+    // A link created for the user to either sign in or out
+    let action = document.createElement("a");    
+    action.href = statusObj.link; 
+    
+    // The HTML div the new elements will be added to
+    let loginStatusBar = document.getElementById("login-status-bar");
+    
+    // The text nodes needed to fill the html elements
+    let userName = document.createTextNode(statusObj.name);    
+    let userStatus = document.createTextNode(statusObj.status);
+    let userAction = document.createTextNode(statusObj.action);
+
+    // Adds the text node children to their respective parents
+    name.appendChild(userName);
+    status.appendChild(userStatus);
+    action.appendChild(userAction);
+
+    // Adds the html elements to the div
+    statusDiv.appendChild(name);
+    statusDiv.appendChild(status);
+    statusDiv.appendChild(action);
+
+    // Adds the new div element to the HTML
+    loginStatusBar.appendChild(statusDiv);
+    
+}
 
 
 /******************************************************************************
@@ -87,16 +128,15 @@ async function loadComments(requestSize) {
 /**
  * Takes a JSON object with comment data and renders the comments on the page. 
  */
-renderComments  = (msgJson) => {
-    if (msgJson === "") {
-        // In the case the response is an empty array, we don't 
-        // want to do anything.
+renderComments  = (commentJSON) => {
+    if (commentJSON === "") {
+        // If the JSON is empty we don't want to do anything
         return;
     } else {
         // Tries loading all the comments on the website, if an error occurs it
         // alerts the user and tries to refresh.
         try {
-            JSON.parse(msgJson).forEach(createComment);
+            JSON.parse(commentJSON).forEach(createComment);
             return;
         } catch (err) {
             alert("There was an error trying to load the comment section.");
