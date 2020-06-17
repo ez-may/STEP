@@ -108,7 +108,6 @@ async function renderLoginStatus(statusObj) {
 
     // Adds the new div element to the HTML
     loginStatusBar.appendChild(statusDiv);
-    console.log("the end of render page");
 }
 
 
