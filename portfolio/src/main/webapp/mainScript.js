@@ -17,7 +17,19 @@
  */
 async function loadPage() { 
     let responseData = await getServletData();
-    console.log(responseData);
+
+    if (responseData.action.trim() === "redirect") {
+        renderLoginStatus({
+            name: "Hello Anonymous User!",
+            status: "You are not logged in.",
+            action: "Please login here.",
+            link: responseData.content.trim(),
+            });
+        return;
+    } else {
+        
+        return;
+    }
 }
 
 /******************************************************************************
@@ -37,7 +49,7 @@ async function getServletData() {
      * Makes the initial request. Determines the content type being sent and
      * trims additional white space.
      */
-    let response = await fetch("/data");
+    let response = await fetch("/data?size=5"); // Default to show 5 comments
     let responseType = response.headers.get("Content-Type");
     let responseContent = await response.text();
     responseContent = responseContent.trim();
@@ -51,11 +63,53 @@ async function getServletData() {
      * statement and then acces the "content" key to complete the step.
      */
      if (responseType === "text" && responseContent.indexOf("login?") != -1) {
-        return {content: responseContent, action: {value: "redirect", enumerable: true}};
+        return {content: responseContent, action: "redirect"};
     } else {
-        return {content: responseContent, action: {value: "read", enumerable: true}};
+        return {content: responseContent, action: "read"};
     }
 }
+
+/**
+ * Takes in a status object with data used to update the html status bar.
+ * The status object needs to have the following keys:
+ * name, status, action, link.
+ */
+async function renderLoginStatus(statusObj) {
+    // The div to hold all the HTML elements created here
+    let statusDiv = document.createElement("div");
+
+    // A welcome message + user's name, or 'Anon' if they aren't logged in
+    let name = document.createElement("p");
+    
+    // A message which is filled if the user isn't logged in
+    let status = document.createElement("p");
+    
+    // A link created for the user to either sign in or out
+    let action = document.createElement("a");    
+    action.href = statusObj.link; 
+    
+    // The HTML div the new elements will be added to
+    let loginStatusBar = document.getElementById("login-status-bar");
+    
+    // The text nodes needed to fill the html elements
+    let userName = document.createTextNode(statusObj.name);    
+    let userStatus = document.createTextNode(statusObj.status);
+    let userAction = document.createTextNode(statusObj.action);
+
+    // Adds the text node children to their respective parents
+    name.appendChild(userName);
+    status.appendChild(userStatus);
+    action.appendChild(userAction);
+
+    // Adds the html elements to the div
+    statusDiv.appendChild(name);
+    statusDiv.appendChild(status);
+    statusDiv.appendChild(action);
+
+    // Adds the new div element to the HTML
+    loginStatusBar.appendChild(statusDiv);
+}
+
 
 /******************************************************************************
  ******************************************************************************
@@ -64,30 +118,33 @@ async function getServletData() {
  *****************************************************************************/
 
 /**
- * Makes a request to the servelet for the comments it has stored, and renders
- * each element of the JSON as a new comment. Default value is 5 for the initial
- * onload call made by the HTML body. 
+ * Makes a request to the servelet for the comments it has stored, and then
+ * makes a call to have it rendered.
  **/
-async function loadComments(requestSize = 5) {
+async function loadComments(requestSize) {
     const response = await fetch("/data?size=" + requestSize);
     let msgJson = await response.text();
 
-    // remove additional white spaces from the response. 
-    // This is especially neccessary when receiving no data
-    msgJson = msgJson.trim();
+    renderComments(msgJson.trim());
+}
 
-    if (msgJson === "") {
-        // In the case the response is an empty array, we don't 
-        // want to do anything.
+/**
+ * Takes a JSON object with comment data and renders the comments on the page. 
+ */
+renderComments  = (commentJSON) => {
+    if (commentJSON === "") {
+        // If the JSON is empty we don't want to do anything
         return;
     } else {
         // Tries loading all the comments on the website, if an error occurs it
         // alerts the user and tries to refresh.
         try {
-            JSON.parse(msgJson).forEach(createComment);
+            JSON.parse(commentJSON).forEach(createComment);
+            return;
         } catch (err) {
             alert("There was an error trying to load the comment section.");
             clearComments();
+            return;
         }
     }
 }
