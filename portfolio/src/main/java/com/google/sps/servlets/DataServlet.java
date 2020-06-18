@@ -49,25 +49,35 @@ public class DataServlet extends HttpServlet {
             response.setContentType("text");
             response.getWriter().println(loginUrl);
             return;
-        }
-
-        if (allComments.isEmpty()) {
-            // If there are no comments, then we send an empty string so the FE
-            // can handle it, otherwise we send the comments normally
-            response.setContentType("text");
-            response.getWriter().println("");
         } else {
-            // Specifies the response as JSON and reads the response size
-            response.setContentType("application:json;");
-            String responseSize = request.getParameter("size");
+            String logoutUrl = userService.createLogoutURL("/MainPage.html");
             
-            // sends the response depending on the 
-            // amount of comments the user specified
-            if (responseSize.equals("all") || Integer.parseInt(responseSize) > allComments.size()) {
-                response.getWriter().println(convertToJson(allComments));
+            // Converts the user information the FE requires to JSON so it can be
+            // added to the response and easily processed by the FE.
+            String userName = userService.getCurrentUser().getNickname();
+            String userId = userService.getCurrentUser().getUserId();
+            String userData = convertToJson(new UserData(userName, userId, logoutUrl));
+            response.setContentType("application:json;");
+
+            if (allComments.isEmpty()) {
+                // If there are no comments, then we only send the user data so
+                // the FE doesn't change anything.
+                response.getWriter().println(Arrays.asList(userData));
             } else {
-                int responseSizeVal = Integer.parseInt(responseSize);
-                response.getWriter().println(convertToJson(allComments.subList(0, responseSizeVal)));
+               String responseSize = request.getParameter("size");
+
+                // The first item of the response should be the user's data
+                allComments.add(0, userData);
+
+                // sends the response depending on the 
+                // amount of comments the user specified
+                if (responseSize.equals("all") || Integer.parseInt(responseSize) > allComments.size() - 1) {
+                    String jsonComments = convertToJson(allComments);
+                    response.getWriter().println(jsonComments);
+                } else {
+                    int responseSizeVal = Integer.parseInt(responseSize);
+                    response.getWriter().println(convertToJson(allComments.subList(0, responseSizeVal)));
+                }
             }
         }
     }
@@ -130,7 +140,7 @@ public class DataServlet extends HttpServlet {
         datastore.put(newComment);
 
         // Redirect back to main page
-        response.sendRedirect("/#comments");
+        response.sendRedirect("/MainPage.html");
 
     }
 
@@ -154,6 +164,22 @@ public class DataServlet extends HttpServlet {
             commentId = id;
         }
 
+    }
+
+    /**
+     * User data class used to organize the name and id of a User object so
+     * the Gson.toJson() function can be called and make FE handling easier.
+     */
+    private class UserData {
+        public String name;
+        public String id;
+        public String logoutUrl;
+
+        public UserData(String name, String id, String logoutUrl) {
+            this.name = name;
+            this.id = id;
+            this.logoutUrl = logoutUrl;
+        }
     }
 
     /**

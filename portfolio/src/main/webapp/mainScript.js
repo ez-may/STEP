@@ -18,16 +18,37 @@
 async function loadPage() { 
     let responseData = await getServletData();
 
-    if (responseData.action.trim() === "redirect") {
+    if (responseData.action === "redirect") {
         renderLoginStatus({
             name: "Hello Anonymous User!",
             status: "You are not logged in.",
             action: "Please login here.",
-            link: responseData.content.trim(),
+            link: responseData.content,
             });
+        
+        // Remove most of the comment section so user's can't interact until
+        // they log in.
+        let commentDiv = document.getElementById("comments");
+        disableComments(commentDiv, responseData.content);
         return;
     } else {
-        
+        // The content sent from the servlet
+        let jsonContent = responseData.content;
+        /* The first element of the parsed list is the user's information.
+         * User data was changed to a JSON string before being added to an
+         * arraylist of strings, then the arraylist was also converted to
+         * a JSON string. So user data was converted twice, and must be parsed
+         * twice.
+         */
+        let userData = JSON.parse(JSON.parse(jsonContent)[0]);
+
+        renderLoginStatus({
+            name: "Hello " + userData.name + "!",
+            status: "Thank you for logging in.",
+            action: "You can logout here.",
+            link: userData.logoutUrl,
+            });
+        renderComments(jsonContent);
         return;
     }
 }
@@ -53,16 +74,14 @@ async function getServletData() {
     let responseType = response.headers.get("Content-Type");
     let responseContent = await response.text();
     responseContent = responseContent.trim();
-    
     /*
-     * If the content type is 'text' and it contains the string "login?" then
-     * it means the servlet replied with a login link, otherwise it replied
-     * with an empty string due to the current implementation of the
-     * data servlet. The actionToTake variable is returned as an object so
+     * If the content type is 'text' then it means the servlet replied with a
+     * login link, otherwise it replied with application:json due to the
+     * current implementation of the data servlet. An object is returned so
      * another function can use the "action" key to control logic in an "if"
      * statement and then acces the "content" key to complete the step.
      */
-     if (responseType === "text" && responseContent.indexOf("login?") != -1) {
+     if (responseType === "text") {
         return {content: responseContent, action: "redirect"};
     } else {
         return {content: responseContent, action: "read"};
@@ -124,22 +143,29 @@ async function renderLoginStatus(statusObj) {
 async function loadComments(requestSize) {
     const response = await fetch("/data?size=" + requestSize);
     let msgJson = await response.text();
-
     renderComments(msgJson.trim());
 }
 
 /**
- * Takes a JSON object with comment data and renders the comments on the page. 
+ * Takes a JSON object with comment data and renders the comments on the page.
+ * Because of the implementation of getServletData and loadPage(), and the need
+ * to call this function outside of loadComments, the task of converting
+ * the data from JSON to a list and extracting user data is left in here. 
  */
 renderComments  = (commentJSON) => {
-    if (commentJSON === "") {
-        // If the JSON is empty we don't want to do anything
+    // The list obtained from a direct conversion of JSON, including user data
+    let allJsonData = JSON.parse(commentJSON);
+
+    if (allJsonData.length  === 1 ) {
+        // This means the list only has the user info nothing should happen
         return;
     } else {
         // Tries loading all the comments on the website, if an error occurs it
         // alerts the user and tries to refresh.
         try {
-            JSON.parse(commentJSON).forEach(createComment);
+            // Removes the userdata from the list
+            let commentData = allJsonData.slice(1);
+            commentData.forEach(createComment);
             return;
         } catch (err) {
             alert("There was an error trying to load the comment section.");
@@ -148,6 +174,31 @@ renderComments  = (commentJSON) => {
         }
     }
 }
+
+/**
+ * Takes in the div element from the html and the login link, and clears the
+ * contents of the comment section, updating to ask the user to login.
+ */
+ disableComments = (commentDiv, loginUrl) => {
+    commentDiv.innerHTML = "";
+
+    // creates the message for the user to log in where the comments usually are
+    let loginPrompt1 = document.createElement("p");
+    let loginPrompt2 = document.createElement("a");
+
+    let text1 = document.createTextNode("Please ");
+    let text2 = document.createTextNode(" if you would like to enable the comment section.");
+    let text3 = document.createTextNode("login");
+
+    loginPrompt2.appendChild(text3);
+    loginPrompt2.href = loginUrl;
+
+    loginPrompt1.appendChild(text1);
+    loginPrompt1.appendChild(loginPrompt2);
+    loginPrompt1.appendChild(text2);
+
+    commentDiv.appendChild(loginPrompt1);
+ }
 
 /**
  * When the user updates the amount of comments to be displayed, this function
