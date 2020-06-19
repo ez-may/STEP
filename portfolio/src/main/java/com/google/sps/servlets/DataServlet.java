@@ -152,10 +152,10 @@ public class DataServlet extends HttpServlet {
      **/
     private class UserComment {
 
-        public String userName;
-        public String userComment;
-        public long commentTimestamp;
-        public long commentId;
+        private String userName;
+        private String userComment;
+        private long commentTimestamp;
+        private long commentId;
 
         public UserComment(String name, String text, long timestamp, long id) {
             userName = name;
@@ -171,9 +171,9 @@ public class DataServlet extends HttpServlet {
      * the Gson.toJson() function can be called and make FE handling easier.
      */
     private class UserData {
-        public String name;
-        public String id;
-        public String logoutUrl;
+        private String name;
+        private String id;
+        private String logoutUrl;
 
         public UserData(String name, String id, String logoutUrl) {
             this.name = name;
