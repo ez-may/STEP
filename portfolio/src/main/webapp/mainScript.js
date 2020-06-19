@@ -40,7 +40,8 @@ async function loadPage() {
          * a JSON string. So user data was converted twice, and must be parsed
          * twice.
          */
-        let userData = JSON.parse(JSON.parse(jsonContent)[0]);
+        let allJsonData = JSON.parse(jsonContent);
+        let userData = JSON.parse(allJsonData[0]);
 
         renderLoginStatus({
             name: "Hello " + userData.name + "!",
@@ -48,7 +49,7 @@ async function loadPage() {
             action: "You can logout here.",
             link: userData.logoutUrl,
             });
-        renderComments(jsonContent);
+        renderComments(allJsonData);
         return;
     }
 }
@@ -143,20 +144,15 @@ async function renderLoginStatus(statusObj) {
 async function loadComments(requestSize) {
     const response = await fetch("/data?size=" + requestSize);
     let msgJson = await response.text();
-    renderComments(msgJson.trim());
+    let jsonData = JSON.parse(msgJson.trim())
+    renderComments(jsonData);
 }
 
 /**
  * Takes a JSON object with comment data and renders the comments on the page.
- * Because of the implementation of getServletData and loadPage(), and the need
- * to call this function outside of loadComments, the task of converting
- * the data from JSON to a list and extracting user data is left in here. 
  */
 renderComments  = (commentJSON) => {
-    // The list obtained from a direct conversion of JSON, including user data
-    let allJsonData = JSON.parse(commentJSON);
-
-    if (allJsonData.length  === 1 ) {
+    if (allJsonData.length === 1 ) {
         // This means the list only has the user info nothing should happen
         return;
     } else {
@@ -183,21 +179,21 @@ renderComments  = (commentJSON) => {
     commentDiv.innerHTML = "";
 
     // creates the message for the user to log in where the comments usually are
-    let loginPrompt1 = document.createElement("p");
-    let loginPrompt2 = document.createElement("a");
+    let loginMsg = document.createElement("p");
+    let loginLink = document.createElement("a");
 
-    let text1 = document.createTextNode("Please ");
-    let text2 = document.createTextNode(" if you would like to enable the comment section.");
-    let text3 = document.createTextNode("login");
+    let msgPart1 = document.createTextNode("Please ");
+    let msgPart3 = document.createTextNode(" if you would like to enable the comment section.");
+    let msgPart2 = document.createTextNode("login");
 
-    loginPrompt2.appendChild(text3);
-    loginPrompt2.href = loginUrl;
+    loginLink.appendChild(msgPart2);
+    loginLink.href = loginUrl;
 
-    loginPrompt1.appendChild(text1);
-    loginPrompt1.appendChild(loginPrompt2);
-    loginPrompt1.appendChild(text2);
+    loginMsg.appendChild(msgPart1);
+    loginMsg.appendChild(msgPart2);
+    loginMsg.appendChild(msgPart3);
 
-    commentDiv.appendChild(loginPrompt1);
+    commentDiv.appendChild(loginMsg);
  }
 
 /**
