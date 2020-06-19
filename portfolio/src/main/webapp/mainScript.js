@@ -11,6 +11,126 @@
  * back and forth from the first 5, to the next 5, and so on. 
  **/
 
+/**
+ * Manages the logic for the initial load of the main page by calling functions
+ * and managing logic based on servlet responses.
+ */
+async function loadPage() { 
+    let responseData = await getServletData();
+
+    if (responseData.action === "redirect") {
+        renderLoginStatus({
+            name: "Hello Anonymous User!",
+            status: "You are not logged in.",
+            action: "Please login here.",
+            link: responseData.content,
+            });
+        
+        // Remove most of the comment section so user's can't interact until
+        // they log in.
+        let commentDiv = document.getElementById("comments");
+        disableComments(commentDiv, responseData.content);
+        return;
+    } else {
+        // The content sent from the servlet
+        let jsonContent = responseData.content;
+        /* The first element of the parsed list is the user's information.
+         * User data was changed to a JSON string before being added to an
+         * arraylist of strings, then the arraylist was also converted to
+         * a JSON string. So user data was converted twice, and must be parsed
+         * twice.
+         */
+        let allJsonData = JSON.parse(jsonContent);
+        let userData = JSON.parse(allJsonData[0]);
+
+        renderLoginStatus({
+            name: "Hello " + userData.name + "!",
+            status: "Thank you for logging in.",
+            action: "You can logout here.",
+            link: userData.logoutUrl,
+            });
+        renderComments(allJsonData);
+        return;
+    }
+}
+
+/******************************************************************************
+ ******************************************************************************
+ **********************AUTHENTICATION FEATURE RELATED CODE*********************
+ ******************************************************************************
+ *****************************************************************************/
+
+/**
+ * Makes the request to the data servlet, and processes the response so it can
+ * be returned and used by other functions. Returns an object with the response
+ * data and a string value specifying what to do with the response data, "read"
+ * or "redirect."
+ */
+async function getServletData() {
+    /**
+     * Makes the initial request. Determines the content type being sent and
+     * trims additional white space.
+     */
+    let response = await fetch("/data?size=5"); // Default to show 5 comments
+    let responseType = response.headers.get("Content-Type");
+    let responseContent = await response.text();
+    responseContent = responseContent.trim();
+    /*
+     * If the content type is 'text' then it means the servlet replied with a
+     * login link, otherwise it replied with application:json due to the
+     * current implementation of the data servlet. An object is returned so
+     * another function can use the "action" key to control logic in an "if"
+     * statement and then acces the "content" key to complete the step.
+     */
+     if (responseType === "text") {
+        return {content: responseContent, action: "redirect"};
+    } else {
+        return {content: responseContent, action: "read"};
+    }
+}
+
+/**
+ * Takes in a status object with data used to update the html status bar.
+ * The status object needs to have the following keys:
+ * name, status, action, link.
+ */
+async function renderLoginStatus(statusObj) {
+    // The div to hold all the HTML elements created here
+    let statusDiv = document.createElement("div");
+
+    // A welcome message + user's name, or 'Anon' if they aren't logged in
+    let name = document.createElement("p");
+    
+    // A message which is filled if the user isn't logged in
+    let status = document.createElement("p");
+    
+    // A link created for the user to either sign in or out
+    let action = document.createElement("a");    
+    action.href = statusObj.link; 
+    
+    // The HTML div the new elements will be added to
+    let loginStatusBar = document.getElementById("login-status-bar");
+    
+    // The text nodes needed to fill the html elements
+    let userName = document.createTextNode(statusObj.name);    
+    let userStatus = document.createTextNode(statusObj.status);
+    let userAction = document.createTextNode(statusObj.action);
+
+    // Adds the text node children to their respective parents
+    name.appendChild(userName);
+    status.appendChild(userStatus);
+    action.appendChild(userAction);
+
+    // Adds the html elements to the div
+    statusDiv.appendChild(name);
+    statusDiv.appendChild(status);
+    statusDiv.appendChild(action);
+
+    // Adds the new div element to the HTML
+    loginStatusBar.appendChild(statusDiv);
+}
+
+
 /******************************************************************************
  ******************************************************************************
  *************************COMMENT FEATURE RELATED CODE*************************
@@ -18,32 +138,63 @@
  *****************************************************************************/
 
 /**
- * Makes a request to the servelet for the comments it has stored, and renders
- * each element of the JSON
- * as a new comment. Default value is 5 for the initial onload call made by the HTML body. 
+ * Makes a request to the servelet for the comments it has stored, and then
+ * makes a call to have it rendered.
  **/
-async function loadComments(requestSize = 5) {
+async function loadComments(requestSize) {
     const response = await fetch("/data?size=" + requestSize);
     let msgJson = await response.text();
+    let jsonData = JSON.parse(msgJson.trim())
+    renderComments(jsonData);
+}
 
-    // remove additional white spaces from the response. 
-    // This is especially neccessary when receiving no data
-    msgJson = msgJson.trim();
-
-    if (msgJson === "") {
-        // In the case the response is an empty array, we don't 
-        // want to do anything.
+/**
+ * Takes a JSON object with comment data and renders the comments on the page.
+ */
+renderComments  = (commentJson) => {
+    if (commentJson.length === 1 ) {
+        // This means the list only has the user info nothing should happen
         return;
     } else {
         // Tries loading all the comments on the website, if an error occurs it
         // alerts the user and tries to refresh.
         try {
-            JSON.parse(msgJson).forEach(createComment);
+            // Removes the userdata from the list
+            let commentData = commentJson.slice(1);
+            commentData.forEach(createComment);
+            return;
         } catch (err) {
             alert("There was an error trying to load the comment section.");
+            clearComments();
+            return;
         }
     }
 }
+
+/**
+ * Takes in the div element from the html and the login link, and clears the
+ * contents of the comment section, updating to ask the user to login.
+ */
+ disableComments = (commentDiv, loginUrl) => {
+    commentDiv.innerHTML = "";
+
+    // creates the message for the user to log in where the comments usually are
+    let loginMsg = document.createElement("p");
+    let loginLink = document.createElement("a");
+
+    let msgPart1 = document.createTextNode("Please ");
+    let msgPart3 = document.createTextNode(" if you would like to enable the comment section.");
+    let msgPart2 = document.createTextNode("login");
+
+    loginLink.appendChild(msgPart2);
+    loginLink.href = loginUrl;
+
+    loginMsg.appendChild(msgPart1);
+    loginMsg.appendChild(loginLink);
+    loginMsg.appendChild(msgPart3);
+
+    commentDiv.appendChild(loginMsg);
+ }
 
 /**
  * When the user updates the amount of comments to be displayed, this function
@@ -152,7 +303,7 @@ async function deleteComment(id) {
 
 /******************************************************************************
  ******************************************************************************
- ******************************Miscellaneous Code******************************
+ ******************************MISCELLANEOUS CODE******************************
  ******************************************************************************
  *****************************************************************************/
 
