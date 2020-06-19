@@ -151,8 +151,8 @@ async function loadComments(requestSize) {
 /**
  * Takes a JSON object with comment data and renders the comments on the page.
  */
-renderComments  = (commentJSON) => {
-    if (allJsonData.length === 1 ) {
+renderComments  = (commentJson) => {
+    if (commentJson.length === 1 ) {
         // This means the list only has the user info nothing should happen
         return;
     } else {
@@ -160,7 +160,7 @@ renderComments  = (commentJSON) => {
         // alerts the user and tries to refresh.
         try {
             // Removes the userdata from the list
-            let commentData = allJsonData.slice(1);
+            let commentData = commentJson.slice(1);
             commentData.forEach(createComment);
             return;
         } catch (err) {
@@ -190,7 +190,7 @@ renderComments  = (commentJSON) => {
     loginLink.href = loginUrl;
 
     loginMsg.appendChild(msgPart1);
-    loginMsg.appendChild(msgPart2);
+    loginMsg.appendChild(loginLink);
     loginMsg.appendChild(msgPart3);
 
     commentDiv.appendChild(loginMsg);
